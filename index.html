@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ thống tra cứu học phí</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      padding: 40px 30px;
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .header-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      display: block;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .alert-banner {
+      background: linear-gradient(90deg, #ffeaa7, #fdcb6e);
+      padding: 15px 30px;
+      text-align: center;
+      color: #2d3436;
+      font-weight: 500;
+      border-bottom: 1px solid #e17055;
+    }
+    
+    .alert-banner::before {
+      content: "📋";
+      margin-right: 8px;
+    }
+    
+    .search-section {
+      padding: 40px 30px;
+      text-align: center;
+    }
+    
+    .search-title {
+      font-size: 24px;
+      color: #2d3436;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .search-container {
+      display: flex;
+      gap: 15px;
+      max-width: 500px;
+      margin: 0 auto;
+      position: relative;
+    }
+    
+    .search-input {
+      flex: 1;
+      padding: 15px 20px;
+      font-size: 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      outline: none;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
+    
+    .search-input:focus {
+      border-color: #4facfe;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+    }
+    
+    .search-button {
+      padding: 15px 30px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .search-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3);
+    }
+    
+    .search-button:active {
+      transform: translateY(0);
+    }
+    
+    .student-card {
+      margin: 30px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+      display: none;
+    }
+    
+    .student-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .student-avatar {
+      width: 60px;
+      height: 60px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .student-info h3 {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    
+    .student-details {
+      padding: 25px;
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+    
+    .info-item {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 10px;
+      border-left: 4px solid #4facfe;
+    }
+    
+    .info-label {
+      font-size: 12px;
+      color: #6c757d;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    
+    .info-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2d3436;
+    }
+    
+    .info-value.highlight {
+      color: #e17055;
+      font-size: 18px;
+    }
+    
+    .info-value.positive {
+      color: #00b894;
+    }
+    
+    .info-value.zero {
+      color: #6c757d;
+    }
+    
+    .payment-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 30px;
+      text-align: center;
+      color: white;
+    }
+    
+    .payment-title {
+      font-size: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .qr-container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 15px;
+    }
+    
+    .qr-container img {
+      width: 200px;
+      height: 200px;
+      border-radius: 8px;
+    }
+    
+    .payment-amount {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    
+    .payment-note {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .no-results {
+      text-align: center;
+      padding: 60px 30px;
+      color: #6c757d;
+    }
+    
+    .no-results-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #6c757d;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e9ecef;
+      border-top: 4px solid #4facfe;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        margin: 0;
+        border-radius: 0;
+      }
+      
+      .search-container {
+        flex-direction: column;
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .header {
+        padding: 30px 20px;
+      }
+      
+      .header h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <span class="header-icon">🎓</span>
+      <h1>Hệ thống tra cứu học phí</h1>
+      <p>Tra cứu thông tin học sinh và thanh toán học phí</p>
+    </div>
+    
+    <!-- Alert Banner -->
+    <div class="alert-banner">
+      Dữ liệu đã được cập nhật. Vui lòng nhập thông tin để tra cứu.
+    </div>
+    
+    <!-- Search Section -->
+    <div class="search-section">
+      <div class="search-title">
+        <span>🔍</span>
+        <span>Tra cứu thông tin</span>
+      </div>
+      
+      <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Nhập ID hoặc tên học sinh..." />
+        <button onclick="searchStudent()" class="search-button">Tìm</button>
+      </div>
+    </div>
+    
+    <!-- Results -->
+    <div id="resultContainer"></div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzaxNmaBfbY_AKBx8kwV6XfIqTV-AACweTBPR9hSiO5jHxHJRnbs8-9uerclPapJj8-/exec";
+    let students = [];
+
+    function removeAccents(str) {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    function formatCurrency(value) {
+      if (!value || value === '0' || value === 0) return '0 VND';
+      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' VND';
+    }
+
+    async function fetchData() {
+      try {
+        const res = await fetch(API_URL);
+        students = await res.json();
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        showError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
+      }
+    }
+
+    function showLoading() {
+      const container = document.getElementById("resultContainer");
+      container.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Đang tìm kiếm...</p>
+        </div>
+      `;
+    }
+
+    function showError(message) {
+      const container = document.getElementById("resultContainer");
+      container.innerHTML = `
+        <div class="no-results">
+          <div class="no-results-icon">❌</div>
+          <h3>Có lỗi xảy ra</h3>
+          <p>${message}</p>
+        </div>
+      `;
+    }
+
+    function showNoResults() {
+      const container = document.getElementById("resultContainer");
+      container.innerHTML = `
+        <div class="no-results">
+          <div class="no-results-icon">🔍</div>
+          <h3>Không tìm thấy kết quả</h3>
+          <p>Vui lòng kiểm tra lại ID hoặc tên học sinh</p>
+        </div>
+      `;
+    }
+
+    function renderStudent(student) {
+      const conLai = student['CÒN'] || 0;
+      const conLaiClass = conLai > 0 ? 'highlight' : 'zero';
+      
+      return `
+        <div class="student-card" style="display: block;">
+          <div class="student-header">
+            <div class="student-avatar">
+              ${(student['HỌ VÀ TÊN'] || 'H')[0].toUpperCase()}
+            </div>
+            <div class="student-info">
+              <h3>${student['HỌ VÀ TÊN'] || 'N/A'}</h3>
+            </div>
+          </div>
+          
+          <div class="student-details">
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">ID học sinh</div>
+                <div class="info-value">${student['ID'] || 'N/A'}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Lớp</div>
+                <div class="info-value">${student['LỚP'] || 'N/A'}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Môn học</div>
+                <div class="info-value">${student['MÔN'] || 'N/A'}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Tháng cũ</div>
+                <div class="info-value">${formatCurrency(student['THÁNG CŨ'])}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">HP tháng mới</div>
+                <div class="info-value">${formatCurrency(student['HP THÁNG MỚI'])}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Sách bài tập</div>
+                <div class="info-value">${formatCurrency(student['SÁCH BÀI TẬP'])}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Giảm</div>
+                <div class="info-value positive">${formatCurrency(student['GIẢM'])}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Tổng cộng</div>
+                <div class="info-value">${formatCurrency(student['CỘNG'])}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Đã nộp</div>
+                <div class="info-value zero">${formatCurrency(student['ĐÃ NỘP'])}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Còn lại</div>
+                <div class="info-value ${conLaiClass}">${formatCurrency(student['CÒN'])}</div>
+              </div>
+            </div>
+          </div>
+          
+          ${student['THANH TOÁN'] ? `
+            <div class="payment-section">
+              <div class="payment-title">
+                <span>💳</span>
+                <span>Thanh toán học phí</span>
+              </div>
+              <div class="qr-container">
+                <img src="${student['THANH TOÁN']}" alt="QR Code thanh toán" />
+              </div>
+              <div class="payment-amount">Số tiền cần thanh toán: ${formatCurrency(student['CÒN'])}</div>
+              <div class="payment-note">Quét mã QR để thanh toán hoặc chuyển khoản với mã tham chiếu: ${student['ID']}</div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    async function searchStudent() {
+      const input = document.getElementById("searchInput").value.trim();
+      
+      if (!input) {
+        alert("Vui lòng nhập tên hoặc ID học sinh");
+        return;
+      }
+      
+      showLoading();
+      
+      if (students.length === 0) {
+        await fetchData();
+      }
+      
+      const filtered = students.filter(s =>
+        removeAccents(s['HỌ VÀ TÊN'] || '').includes(removeAccents(input)) ||
+        (s['ID'] || '').toLowerCase().includes(input.toLowerCase())
+      );
+      
+      const container = document.getElementById("resultContainer");
+      
+      if (filtered.length === 0) {
+        showNoResults();
+        return;
+      }
+      
+      container.innerHTML = filtered.map(student => renderStudent(student)).join('');
+    }
+
+    // Allow Enter key to search
+    document.getElementById("searchInput").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        searchStudent();
+      }
+    });
+  </script>
+</body>
+</html>
